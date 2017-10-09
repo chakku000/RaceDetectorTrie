@@ -45,6 +45,7 @@ class Trie{
                 if(!nodes.count(lock)){ // 対応するロック識別子がない
                     r->nodes[lock] = Trie();
                 }
+                // r = &r->nodes[lock]; どっちになるんだ...?
                 r = r->nodes[lock];
             }
             // 現在のノードが対応するロック集合を持ったパスの葉
