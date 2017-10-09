@@ -2,6 +2,7 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <cassert>
 
 enum ACCESS_TYPE{
     READ,WRITE,
@@ -20,6 +21,15 @@ class Trie{
         ACCESS_TYPE meet(ACCESS_TYPE ai,ACCESS_TYPE aj){
             if(ai == aj) return ai;
             else return WRITE;
+        }
+        T meet(T ti,T tj){
+            if(ti == tj) return ti;
+            else if(ti == -1 or tj == -1){
+                assert(ti != -2 or tj != -2);
+                return (ti == -2) ? tj : ti;
+            }
+            else if(ti != tj) return -1;
+            assert(false);
         }
     public:
         ACCESS_TYPE a;
