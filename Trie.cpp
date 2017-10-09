@@ -10,9 +10,17 @@ enum ACCESS_TYPE{
 /**
  * T スレッド識別子の型
  * U ロック識別子の型
+ *
+ * 制約
+ * T は負の値を取れる整数である必要がある
  */
 template<typename T,typename U>
 class Trie{
+    private:
+        ACCESS_TYPE meet(ACCESS_TYPE ai,ACCESS_TYPE aj){
+            if(ai == aj) return ai;
+            else return WRITE;
+        }
     public:
         ACCESS_TYPE a;
         T tid;      // スレッド識別子 tid >= 0 でスレッド,tid == -1 で「2つの異なるスレッド」,tid==-2で「スレッドがない」
