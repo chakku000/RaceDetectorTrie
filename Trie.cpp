@@ -61,13 +61,13 @@ class Trie{
             Trie *r = this;
             for(const U& lock : locks){
                 std::cout << "looking for lock " << lock << std::endl;
-                //if(!nodes.count(lock)){ // 対応するロック識別子がない
-                //    std::cout << "no lock" << std::endl;
-                //    //r->nodes[lock] = Trie();
-                //    //r->nodes[lock];
-                //    //r->nodes.insert(std::make_pair(lock,Trie()));
-                //}
-                // r = &r->nodes[lock]; どっちになるんだ...?
+                if(!r->nodes.count(lock)){ // 対応するロック識別子がない
+                    std::cout << "no lock" << std::endl;
+                    r->nodes[lock] = Trie();
+                    //r->nodes[lock];
+                    //r->nodes.insert(std::make_pair(lock,Trie()));
+                }
+                 //r = &r->nodes[lock]; どっちになるんだ...?
                 r = &r->nodes[lock];
             }
             // 現在のノードが対応するロック集合を持ったパスの葉
