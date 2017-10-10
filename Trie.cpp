@@ -35,7 +35,7 @@ class Trie{
         ACCESS_TYPE a;
         T tid;      // スレッド識別子 tid >= 0 でスレッド,tid == -1 で「2つの異なるスレッド」,tid==-2で「スレッドがない」
         std::map<U,Trie> nodes;
-        Trie(T tid_,ACCESS_TYPE a_,std::set<U>& locks){}
+        Trie(){}
 
         // weakness checkは行わない
         // とにかく追加するだけ
@@ -46,7 +46,7 @@ class Trie{
                     r->nodes[lock] = Trie();
                 }
                 // r = &r->nodes[lock]; どっちになるんだ...?
-                r = r->nodes[lock];
+                r = &r->nodes[lock];
             }
             // 現在のノードが対応するロック集合を持ったパスの葉
             // r->a , r->tid と a_,tid_をmeet演算すれば良い
@@ -57,5 +57,8 @@ class Trie{
 
 
 int main(){
+    Trie<int,int> trie;
 
+    std::set<int> st{1,2,3,4};
+    trie.insert(st,0,READ);
 }
