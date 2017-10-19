@@ -45,18 +45,20 @@ class Trie{
         ACCESS_TYPE a;
         T tid;      // スレッド識別子 tid >= 0 でスレッド,tid == -1 で「2つの異なるスレッド」,tid==-2で「スレッドがない」
         std::map<U,Trie> nodes;
+        /**
+         * Constructor
+         */
         Trie() : tid(-2) , a(READ) , id(cid++){}
-        ~Trie(){
-            //std::cout << "delete node " << id << std::endl;
-            //std::cout << "\tchild is ";
-            //for(auto p : nodes){
-            //    std::cout << p.first << " ";
-            //}
-            //std::cout << std::endl;
-        }
 
-        // weakness checkは行わない
-        // とにかく追加するだけ
+        /**
+         * Destructor
+         */
+        ~Trie(){}
+
+        /**
+         * Trie木にアクセスを挿入
+         * @detail weakness checkは行わずにとにかく挿入する
+         */
         void insert(const std::set<U>& locks,T tid_,ACCESS_TYPE a_){
             Trie *r = this;
             for(const U& lock : locks){
@@ -64,10 +66,7 @@ class Trie{
                 if(!r->nodes.count(lock)){ // 対応するロック識別子がない
                     std::cout << "no lock" << std::endl;
                     r->nodes[lock] = Trie();
-                    //r->nodes[lock];
-                    //r->nodes.insert(std::make_pair(lock,Trie()));
                 }
-                 //r = &r->nodes[lock]; どっちになるんだ...?
                 r = &r->nodes[lock];
             }
             // 現在のノードが対応するロック集合を持ったパスの葉
@@ -89,6 +88,9 @@ class Trie{
         }
 };
 
+/**
+ * Trie木を渡せばそのTrieのdotファイルを吐くのでGraphvisなどで適宜可視化できる
+ */
 namespace TrieViewer{
     int label=0;
     template<typename T,typename U>
