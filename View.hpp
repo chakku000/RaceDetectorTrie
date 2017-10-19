@@ -1,9 +1,19 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+
+#ifndef INCLUDE_VIEW
+#define INCLUDE_VIEW
+#endif
+
+#ifndef INCLUDE_TRIE
+#include "Trie.hpp"
+#endif
+
 /**
  * Trie木を渡せばそのTrieのdotファイルを吐くのでGraphvisなどで適宜可視化できる
  */
+
 namespace TrieViewer{
     int label=0;
     template<typename T,typename U>
