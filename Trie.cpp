@@ -10,6 +10,16 @@
 enum ACCESS_TYPE{
     READ,WRITE,
 };
+bool isWeak(ACCESS_TYPE p,ACCESS_TYPE q)
+{
+    return (p == q) || (p == WRITE);
+}
+
+std::ostream& operator<<(std::ostream& os , ACCESS_TYPE a){
+    if(a == READ) os << "READ";
+    else os << "WRITE";
+    return os;
+}
 
 int cid = 0;
 
@@ -41,7 +51,6 @@ class Trie{
             assert(false);
         }
 
-
         /**
          * if p is weaker than q then true
          *                       else false
@@ -51,10 +60,6 @@ class Trie{
             return (p == q) || (p == -2);
         }
 
-        bool isWeak(ACCESS_TYPE p,ACCESS_TYPE q)
-        {
-            return (p == q) || (p == WRITE);
-        }
     public:
         int id;
         ACCESS_TYPE a;
@@ -94,6 +99,7 @@ class Trie{
          */
         bool hasWeaknessAccess(const std::set<L> locks,ACCESS_TYPE new_a_type,T new_tid){
             if(isWeak(new_tid,tid) and isWeak(new_a_type,a)){ // 新しいアクセスが該当ノードに対応する過去アクセスよりも弱い
+                //std::cerr << "Return True : " << tid << " " << a << std::endl;
                 return true;
             }
 
@@ -104,8 +110,9 @@ class Trie{
                 // もし子ノードから辿ってweakerなアクセスが存在したらtrueを返す
                 if(node.second.hasWeaknessAccess(locks,new_a_type,new_tid)) return true;
             }
-
-            std::cerr << "Return False " << tid << " " << ((a == WRITE) ? "WRITE" : "READ" )<< std::endl;
+            //std::cerr << "Return False " << tid << " " << ((a == WRITE) ? "WRITE" : "READ") << std::endl;
+            //std::cerr << "New Access = " << new_tid << " " << new_a_type << std::endl;
+            //std::cerr << "Weaker = " << std::boolalpha << isWeak(tid,new_tid) << " " << isWeak(a,new_a_type) << std::endl;
             return false;
         }
 
@@ -172,12 +179,9 @@ int main(){
     TrieViewer::view<int,int>(trie,"out.dot");
     TrieViewer::view<int,int>(trie,"out2.dot");
 
-    std::set<int> new_access{1,2,3,4,5};
+    std::set<int> new_access{1,2,3,4};
 
-    std::cout << "READ  = " << READ << std::endl;
-    std::cout << "WRITE = " << WRITE << std::endl;
-
-    bool f = trie.hasWeaknessAccess(new_access,READ,4);
+    bool f = trie.hasWeaknessAccess(new_access,WRITE,3);
 
     std::cout << std::boolalpha << f << std::endl;
 }
