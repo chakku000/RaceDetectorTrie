@@ -15,12 +15,12 @@ int cid = 0;
 
 /**
  * T スレッド識別子の型
- * U ロック識別子の型
+ * L ロック識別子の型
  *
  * 制約
  * T は負の値を取れる整数である必要がある
  */
-template<typename T,typename U>
+template<typename T,typename L>
 class Trie{
     private:
         ACCESS_TYPE meet(ACCESS_TYPE ai,ACCESS_TYPE aj){
@@ -40,11 +40,26 @@ class Trie{
             }
             assert(false);
         }
+
+
+        /**
+         * if p is weaker than q then true
+         *                       else false
+         */
+        bool isWeak(T p,T q)
+        {
+            return (p == q) || (p == -2);
+        }
+
+        bool isWeak(ACCESS_TYPE p,ACCESS_TYPE q)
+        {
+            return (p == q) || (p == WRITE);
+        }
     public:
         int id;
         ACCESS_TYPE a;
         T tid;      // スレッド識別子 tid >= 0 でスレッド,tid == -1 で「2つの異なるスレッド」,tid==-2で「スレッドがない」
-        std::map<U,Trie> nodes;
+        std::map<L,Trie> nodes;
         /**
          * Constructor
          */
@@ -59,12 +74,10 @@ class Trie{
          * Trie木にアクセスを挿入
          * @detail weakness checkは行わずにとにかく挿入する
          */
-        void insert(const std::set<U>& locks,T tid_,ACCESS_TYPE a_){
+        void insert(const std::set<L>& locks,T tid_,ACCESS_TYPE a_){
             Trie *r = this;
-            for(const U& lock : locks){
-                std::cout << "looking for lock " << lock << std::endl;
+            for(const L& lock : locks){
                 if(!r->nodes.count(lock)){ // 対応するロック識別子がない
-                    std::cout << "no lock" << std::endl;
                     r->nodes[lock] = Trie();
                 }
                 r = &r->nodes[lock];
@@ -73,7 +86,27 @@ class Trie{
             // r->a , r->tid と a_,tid_をmeet演算すれば良い
             r->a = meet(r->a,a_);
             r->tid = meet(r->tid,tid_);
-            std::cout << "make leaf" << std::endl;
+        }
+
+        /**
+         * より弱いアクセスが存在するかのチェック
+         * 新しいアクセスより弱いものがあったときにtrueになる
+         */
+        bool hasWeaknessAccess(const std::set<L> locks,ACCESS_TYPE new_a_type,T new_tid){
+            if(isWeak(new_tid,tid) and isWeak(new_a_type,a)){ // 新しいアクセスが該当ノードに対応する過去アクセスよりも弱い
+                return true;
+            }
+
+            for(auto node : nodes){
+                // あるノードの子孫に相当するアクセスが持つロックが新しいアクセスに含まれない --> その子孫はweaknessではない
+                if(!locks.count(node.first)) continue;
+
+                // もし子ノードから辿ってweakerなアクセスが存在したらtrueを返す
+                if(node.second.hasWeaknessAccess(locks,new_a_type,new_tid)) return true;
+            }
+
+            std::cerr << "Return False " << tid << " " << ((a == WRITE) ? "WRITE" : "READ" )<< std::endl;
+            return false;
         }
 
 
@@ -131,18 +164,20 @@ int main(){
 
     std::set<int> st1{1,2,3,4};
     std::set<int> st2{1,2,5};
-    trie.insert(st1,0,WRITE);
-    trie.insert(st2,0,WRITE);
-
-    //std::cout << "--------------------" << std::endl;
-
-    //trie.debug();
-
-    //Trie<int,int> t2 = trie.nodes[1];
-    //t2.debug();
-
-    //Trie<int,int> t3 = t2.nodes[2];
-    //t3.debug();
+    std::set<int> st3{1,2,3};
+    trie.insert(st1,1,WRITE);
+    trie.insert(st2,2,WRITE);
+    trie.insert(st3,3,WRITE);
 
     TrieViewer::view<int,int>(trie,"out.dot");
+    TrieViewer::view<int,int>(trie,"out2.dot");
+
+    std::set<int> new_access{1,2,3,4,5};
+
+    std::cout << "READ  = " << READ << std::endl;
+    std::cout << "WRITE = " << WRITE << std::endl;
+
+    bool f = trie.hasWeaknessAccess(new_access,READ,4);
+
+    std::cout << std::boolalpha << f << std::endl;
 }
