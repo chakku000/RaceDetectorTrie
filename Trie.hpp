@@ -7,6 +7,10 @@
 #include <fstream>
 #include <string>
 
+#ifndef INCLUDE_TRIE
+#define INCLUDE_TRIE
+#endif
+
 enum ACCESS_TYPE{
     READ,WRITE,
 };
@@ -129,7 +133,7 @@ class Trie{
 };
 
 
-
+/*
 int main(){
     Trie<int,int> trie;
 
@@ -149,3 +153,4 @@ int main(){
 
     std::cout << std::boolalpha << f << std::endl;
 }
+*/
