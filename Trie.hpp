@@ -103,7 +103,6 @@ class Trie{
          */
         bool hasWeaknessAccess(const std::set<L> locks,ACCESS_TYPE new_a_type,T new_tid){
             if(isWeak(new_tid,tid) and isWeak(new_a_type,a)){ // 新しいアクセスが該当ノードに対応する過去アクセスよりも弱い
-                //std::cerr << "Return True : " << tid << " " << a << std::endl;
                 return true;
             }
 
@@ -114,9 +113,6 @@ class Trie{
                 // もし子ノードから辿ってweakerなアクセスが存在したらtrueを返す
                 if(node.second.hasWeaknessAccess(locks,new_a_type,new_tid)) return true;
             }
-            //std::cerr << "Return False " << tid << " " << ((a == WRITE) ? "WRITE" : "READ") << std::endl;
-            //std::cerr << "New Access = " << new_tid << " " << new_a_type << std::endl;
-            //std::cerr << "Weaker = " << std::boolalpha << isWeak(tid,new_tid) << " " << isWeak(a,new_a_type) << std::endl;
             return false;
         }
 
