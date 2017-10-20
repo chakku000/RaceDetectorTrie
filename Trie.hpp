@@ -25,8 +25,6 @@ std::ostream& operator<<(std::ostream& os , ACCESS_TYPE a){
     return os;
 }
 
-int cid = 0;
-
 /**
  * T スレッド識別子の型
  * L ロック識別子の型
@@ -65,14 +63,13 @@ class Trie{
         }
 
     public:
-        int id;
         ACCESS_TYPE a;
         T tid;      // スレッド識別子 tid >= 0 でスレッド,tid == -1 で「2つの異なるスレッド」,tid==-2で「スレッドがない」
         std::map<L,Trie> nodes;
         /**
          * Constructor
          */
-        Trie() : tid(-2) , a(READ) , id(cid++){}
+        Trie() : tid(-2) , a(READ){}
 
         /**
          * Destructor
