@@ -139,7 +139,23 @@ class Trie{
             return false;
         }
 
+        /**
+         * ノード削除
+         * @detail 新しいアクセスよりも強いアクセスを履歴から削除
+         * 愚直実装する.具体的にはこれまで辿ってきたロックの集合を保持していて各ノードでチェック
+         */
+        void deleteStrongerAccess(const std::set<L> locks,ACCESS_TYPE new_a_type,T new_tid,std::set<int> traversed)
+        {
+            // ノードが新しいアクセスよりstrongerかをチェックしてdelete
+            // @coding_now
 
+            // 子ノードからdelete
+            for(auto node : nodes){
+                traversed.insert(node.first);
+                deleteStrongerAccess(locks,new_a_type,new_tid,traversed);
+                traversed.erase(node.first);
+            }
+        }
 
         void debug(){
             std::cerr << "tid = " << tid << std::endl;
