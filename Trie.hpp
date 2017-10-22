@@ -113,6 +113,33 @@ class Trie{
             return false;
         }
 
+        /**
+         * 競合検査
+         * @detail 競合がある場合にtrue,無い場合にfalseを返す
+         */
+        bool hasRace(const set::set<L> locks,ACCESS_TYPE new_a_type,T new_tid)
+        {
+            for(auto node : nodes){
+                if(locks.count(node.first))
+                {// Case 1 : ノードnに到達する辺lがe.Lのロックに含まれている場合,共有するロックがあるので競合しない
+                    continue;
+                }
+                else if(meet(new_tid,tid)==-1 and meet(new_a_type,a)==WRITE)
+                {// Case 2: Case1でなく,アクセススレッドとノード対応すれどのmeetがt_buttom,meet(e.a,n.a) = writeの場合は競合
+                    return true;
+                }
+                else
+                {// Case3 : Case1,2以外の場合は子ノードをrootとする木を探索する必要がある
+                    if(node.second.hasRace(locks,new_a_type,new_tid))
+                    {   // 子ノードを根とする木で競合がある場合は全体で競合があると判定
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+
 
         void debug(){
             std::cerr << "tid = " << tid << std::endl;
