@@ -117,7 +117,7 @@ class Trie{
          * 競合検査
          * @detail 競合がある場合にtrue,無い場合にfalseを返す
          */
-        bool hasRace(const set::set<L> locks,ACCESS_TYPE new_a_type,T new_tid)
+        bool hasRace(const std::set<L> locks,ACCESS_TYPE new_a_type,T new_tid)
         {
             for(auto node : nodes){
                 if(locks.count(node.first))
@@ -143,11 +143,27 @@ class Trie{
          * ノード削除
          * @detail 新しいアクセスよりも強いアクセスを履歴から削除
          * 愚直実装する.具体的にはこれまで辿ってきたロックの集合を保持していて各ノードでチェック
+         * ノードの削除はノードの書き換えで実現するのでFreeを行わない.
+         * Freeを行うような実装を刷る場合は,子ノードがtid=-2で,さらに子孫ノードが無い場合に解放すればよい
          */
         void deleteStrongerAccess(const std::set<L> locks,ACCESS_TYPE new_a_type,T new_tid,std::set<int> traversed)
         {
             // ノードが新しいアクセスよりstrongerかをチェックしてdelete
-            // @coding_now
+            if(isWeak(new_a_type,a) and isWeak(new_tid,tid)){
+                bool subset = true;   // 新しいアクセスがこれまで辿ってきたロックの部分集合である場合にtrue
+                // ロックが部分集合か?
+                for(const L& l : locks){
+                    if(!traversed.count(l)){
+                        subset = false;
+                        break;
+                    }
+                }
+                if(subset)
+                {// 新しいアクセスのロック集合が辿ってきたロック集合の部分集合の場合,このノードを削除
+                    tid = -2;       //該当ノードのスレッドを「t_top = -2 (スレッドがない)」状態にする
+                    a = READ;       //該当ノードのアクセスタイプをREADにする
+                }
+            }
 
             // 子ノードからdelete
             for(auto node : nodes){
