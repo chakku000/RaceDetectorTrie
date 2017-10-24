@@ -146,7 +146,7 @@ class Trie{
          * ノードの削除はノードの書き換えで実現するのでFreeを行わない.
          * Freeを行うような実装を刷る場合は,子ノードがtid=-2で,さらに子孫ノードが無い場合に解放すればよい
          */
-        void deleteStrongerAccess(const std::set<L> locks,ACCESS_TYPE new_a_type,T new_tid,std::set<int> traversed)
+        void deleteStrongerAccess(const std::set<L>& locks,ACCESS_TYPE new_a_type,T new_tid,std::set<int> traversed)
         {
             // ノードが新しいアクセスよりstrongerかをチェックしてdelete
             if(isWeak(new_a_type,a) and isWeak(new_tid,tid)){
