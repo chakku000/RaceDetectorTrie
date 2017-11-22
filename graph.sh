@@ -1,2 +1,7 @@
-dot -Tpng out.dot -o out.png
-dot -Tpng out2.dot -o out2.png
+#! /bin/bash
+
+function f(){
+    dot -Tpng $1.dot -o $1.png
+}
+
+f $1
