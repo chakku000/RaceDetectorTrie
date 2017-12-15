@@ -1,8 +1,7 @@
-outpng () {
-    filename=`echo $1 | sed 's/\.[^\.]*$//'`
-    filename=$filename".png"
-    dot -Tpng $1 -o $filename
-    echo "Generate "$filename
+#! /bin/bash
+
+function f(){
+    dot -Tpng $1.dot -o $1.png
 }
 
-outpng $1
+f $1

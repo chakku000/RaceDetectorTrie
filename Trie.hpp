@@ -19,6 +19,13 @@ bool isWeak(ACCESS_TYPE p,ACCESS_TYPE q)
     return (p == q) || (p == WRITE);
 }
 
+std::ostream& operator<<(std::ostream& os , const std::set<int> &st){
+    os << "{";
+    for(int i : st) os << i << " , ";
+    os << "}";
+    return os;
+}
+
 std::ostream& operator<<(std::ostream& os , ACCESS_TYPE a){
     if(a == READ) os << "READ";
     else os << "WRITE";
@@ -152,6 +159,7 @@ class Trie{
          */
         void deleteStrongerAccess(const std::set<L>& locks,ACCESS_TYPE new_a_type,T new_tid,std::set<int> traversed)
         {
+            std::cout << "delete " << locks << std::endl;
             // ノードが新しいアクセスよりstrongerかをチェックしてdelete
             if(isWeak(new_a_type,a) and isWeak(new_tid,tid)){
                 bool subset = true;   // 新しいアクセスがこれまで辿ってきたロックの部分集合である場合にtrue
@@ -171,8 +179,9 @@ class Trie{
 
             // 子ノードからdelete
             for(auto node : nodes){
+                std::cout << "child " << node.first << std::endl;
                 traversed.insert(node.first);
-                deleteStrongerAccess(locks,new_a_type,new_tid,traversed);
+                node.second.deleteStrongerAccess(locks,new_a_type,new_tid,traversed);
                 traversed.erase(node.first);
             }
         }
