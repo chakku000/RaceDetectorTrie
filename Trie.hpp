@@ -99,7 +99,11 @@ class Trie{
          * 新しいアクセスより弱いものがあったときにtrueになる
          */
         bool hasWeaknessAccess(const std::set<L> locks,ACCESS_TYPE new_a_type,T new_tid){
-            if(isWeak(new_tid,tid) and isWeak(new_a_type,a)){ // 新しいアクセスが該当ノードに対応する過去アクセスよりも弱い
+            std::cout << tid << " " << a << std::endl;
+            if(isWeak(tid,new_tid) and isWeak(a,new_a_type)){ // 新しいアクセスが該当ノードに対応する過去アクセスよりも弱い
+                std::cout << "WEAKER" << std::endl;
+                std::cout << "NODE " << tid << " " << a << std::endl;
+                std::cout << "NOEW " << new_tid << " " << new_a_type << std::endl;
                 return true;
             }
 

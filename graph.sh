@@ -1,2 +1,8 @@
-dot -Tpng out.dot -o out.png
-dot -Tpng out2.dot -o out2.png
+outpng () {
+    filename=`echo $1 | sed 's/\.[^\.]*$//'`
+    filename=$filename".png"
+    dot -Tpng $1 -o $filename
+    echo "Generate "$filename
+}
+
+outpng $1
